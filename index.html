@@ -369,10 +369,11 @@
 					$("#recent_duration").html(splitedDiffX[0] + ":" + splitedDiffX[1] + ":" + splitedDiffX[2]);
 					$(".recent_task").addClass("grayout").removeClass("recent_task");
 
+					count += 1;
 					$("#tasks").prepend("<div class='task recent_task'><div class='t_no'>"
-						+ (++count)
+						+ count
 						+ "</div><div class='t_name'>"
-						+ "<input class='textBox' id='input"+count+"'placeholder=''>"
+						+ "<input class='textBox' id='input"+count+"'>"
 						+ "</div><div class='t_time' id='recent_start'>"
 						+ splitedCurrentX[0] + ":" + splitedCurrentX[1] + ":" + splitedCurrentX[2]
 						+ "</div><div class='t_time' id='recent_stop'>"
@@ -381,8 +382,9 @@
 						+ ""
 						+ "</div></div>");
 
-					setCookie("count",count);
+					setCookie("count", count);
 					setCookie("allMarks", $("#tasks").html());
+					console.log(getCookie("allMarks").length)
 
 					clearInterval(interval);
 					interval = setInterval(function(){
