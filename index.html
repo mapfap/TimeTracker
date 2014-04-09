@@ -317,6 +317,7 @@
 						zero(Math.floor(sec % 60)),
 					];
 				}
+				var interval = 0;
 
 				var start;
 				var mostRecent = null;
@@ -377,9 +378,8 @@
 					setCookie("allMarks", $("#tasks").html());
 
 					mostRecent = splitedCurrentX;
-					var interval = 0;
 					clearInterval(interval);
-					var interval = setInterval(function(){
+					interval = setInterval(function(){
 						current = getSecByFox();
 						var diff = current - start;
 						var splitedDiff = splitSec(diff);
