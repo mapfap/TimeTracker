@@ -233,6 +233,10 @@
 			font-size: 18px;
 		}
 
+		#sArea {
+			display: none;
+		}
+
 		.vip {
 			/*border: solid 2px #19527c;*/
 			background-color: #73aee2;
@@ -277,8 +281,11 @@
 					var exdays = 4000;
 					d.setTime(d.getTime()+(exdays*24*60*60*1000));
 					var expires = "expires="+d.toGMTString();
-
 					document.cookie = name + "=" + escape(value) + "; " + expires;
+				}
+
+				function setStorage(name, value) {
+					$.post("c/set.php",{name:name,value:value,s:getS()},function(resp){});
 				}
 
 				function getCookie(name) {
@@ -291,8 +298,17 @@
 					 }
 					return "";
 				}
-			
-				// var count = 0;
+
+				function getS(){
+					var ts = getCookie("s");
+					if (ts == "") {
+						$.post("c/s.php",{},function(s){$("#sArea").text(s)})
+						setCookie("s", $("#sArea").text());
+						$("#sArea").text("");
+					}
+					return getCookie("s");
+				}
+
 				var count = getCookie("count");
 				if (count == "") {
 					count = 0;
@@ -300,10 +316,13 @@
 					count = parseInt(count);
 				}
 
-				$("#tasks").html(getCookie("allMarks"));
-				for (var i = 1; i <= count; i++) {
-					$("#input" + i).val( unescape(getCookie("input" + i)) );
-				}
+				$.post("c/get.php",{name:"allMarks",s:getS()},function(resp){
+					$("#tasks").html(resp);
+
+					for (var i = 1; i <= count; i++) {
+							$("#input" + i).val( getCookie("input" + i) );
+					}
+				});
 
 				function getSecByFox() {
 					var currentDate = new Date();
@@ -326,7 +345,7 @@
 				}
 
 				$("body").delegate("input", "keyup", function(){
-					setCookie( $(this).attr("id"), escape($(this).val()) );
+					setCookie( $(this).attr("id"), $(this).val() );
 				});
 
 				$("#readme").hover(function(){
@@ -339,6 +358,7 @@
 					var r = confirm("DELETE EVERYTHING?");
 					if (r == true) {
 						$("#tasks").html("");
+						$.post("c/clear.php",{s:getS()},function(){});
 						count = 0;
 						var cookies = document.cookie.split(";");
 				    for (var i = 0; i < cookies.length; i++) {
@@ -383,8 +403,7 @@
 						+ "</div></div>");
 
 					setCookie("count", count);
-					setCookie("allMarks", $("#tasks").html());
-					console.log(getCookie("allMarks").length)
+					setStorage("allMarks", $("#tasks").html());
 
 					clearInterval(interval);
 					interval = setInterval(function(){
@@ -416,8 +435,7 @@
 		<center>
 			<div class="split"></div>
 			<div class="split"></div>
-
-
+				<div id="sArea"></div>
 				<div class="frame" id="f1">
 				<button class="noselect option" id="hour">00</button>
 				<div class="noselect or">:</div>
