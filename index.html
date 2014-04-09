@@ -320,7 +320,10 @@
 				var interval = 0;
 
 				var start;
-				var mostRecent = null;
+				var mostRecentSec = getCookie("mostRecentSec");
+				if (mostRecentSec != "") {
+					mostRecentSec = parseInt(mostRecentSec);
+				}
 
 				$("body").delegate("input", "keyup", function(){
 					setCookie( $(this).attr("id"), escape($(this).val()) );
@@ -352,11 +355,15 @@
 					var currentX = getSecByFox();
 					var splitedCurrentX = splitSec(currentX);
 
-					if (mostRecent == null) mostRecent = splitedCurrentX;
-					var splitedRecentStart = mostRecent;
-					var recentStartSec = splitedRecentStart[0] * 3600 + splitedRecentStart[1] * 60 + splitedRecentStart[2];
-					var diffX = currentX - recentStartSec;
+					if (mostRecentSec == "") {
+						mostRecentSec = getSecByFox();
+						setCookie("mostRecentSec", mostRecentSec);
+					}
+					var diffX = currentX - mostRecentSec;
 					var splitedDiffX = splitSec(diffX);
+
+					mostRecentSec = currentX;
+					setCookie("mostRecentSec", mostRecentSec);
 
 					$("#recent_stop").html(splitedCurrentX[0] + ":" + splitedCurrentX[1] + ":" + splitedCurrentX[2]);
 					$("#recent_duration").html(splitedDiffX[0] + ":" + splitedDiffX[1] + ":" + splitedDiffX[2]);
@@ -377,7 +384,6 @@
 					setCookie("count",count);
 					setCookie("allMarks", $("#tasks").html());
 
-					mostRecent = splitedCurrentX;
 					clearInterval(interval);
 					interval = setInterval(function(){
 						current = getSecByFox();
