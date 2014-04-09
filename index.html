@@ -4,6 +4,7 @@
 		<link rel="stylesheet" type="text/css" href="fonts/THSarabunNew.css"/>
 		<link rel="stylesheet" type="text/css" href="fonts/thaisansneue.css"/>
 		<script src="jquery-1.11.0.min.js"></script>
+		<!-- <script src="FileSaver.js"></script> -->
 
 		<title>Time Tracker</title>
 		<style>
@@ -195,6 +196,7 @@
 			padding-left: 10px;
 			color: white;
 			-moz-border-radius:3px;-webkit-border-radius:3px;border-radius:3px;
+			z-index: 200;
 		}
 
 		.t_no {
@@ -233,6 +235,22 @@
 			-moz-webkit-transition: 1s ease;
 		}
 
+		#free1 {
+			position: fixed;
+			top: 0px;
+			left: 0px;
+			width: 100%;
+			height: 100%;
+			background-color: rgba(0,0,0,0.8);
+			color: #fff;
+			font-size: 50px;
+			-transition: 3s ease;
+			-webkit-transition: 3s ease;
+			-moz-webkit-transition: 3s ease;
+			display: none;
+			z-index: 100;
+		}
+
 		</style>
 		<script>
 			$(function(){
@@ -243,7 +261,7 @@
 
 				function setCookie(name, value) {
 					var d = new Date();
-					var exdays = 1000;
+					var exdays = 4000;
 					d.setTime(d.getTime()+(exdays*24*60*60*1000));
 					var expires = "expires="+d.toGMTString();
 
@@ -294,16 +312,25 @@
 					setCookie( $(this).attr("id"), escape($(this).val()) );
 				});
 
+				$("#readme").hover(function(){
+					$("#free1").css("display", "inline-block");
+				}, function(){
+					$("#free1").css("display", "none");
+				});
+
 				$("#clearButton").click(function(){
-					$("#tasks").html("");
-					count = 0;
-					var cookies = document.cookie.split(";");
-			    for (var i = 0; i < cookies.length; i++) {
-			    	var cookie = cookies[i];
-			    	var eqPos = cookie.indexOf("=");
-			    	var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
-			    	document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";	
-			    }
+					var r = confirm("DELETE EVERYTHING?");
+					if (r == true) {
+						$("#tasks").html("");
+						count = 0;
+						var cookies = document.cookie.split(";");
+				    for (var i = 0; i < cookies.length; i++) {
+				    	var cookie = cookies[i];
+				    	var eqPos = cookie.indexOf("=");
+				    	var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+				    	document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";	
+				    }
+				  }
 				});
 
 				$("#markButton").click(function(){
@@ -397,10 +424,13 @@
 			<div class="split"></div>
 			
 		
+			<div id="free1">
+				Everything will be kept inside cookies for 4000 days.
+			</div>
 			<div class="floatB">
 				Developed by Mapfap.
-				<button class="noselect option red" id="clearButton">Clear all.</button>
-				<button class="noselect option red" id="exportButton">Export file.</button>
+				<button class="noselect option red" id="clearButton">Clear.</button>
+				<button class="noselect option red" id="readme">Read Me.</button>
 			</div>
 		</center>
 	</body>
