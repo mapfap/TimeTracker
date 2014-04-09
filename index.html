@@ -110,8 +110,11 @@
 			/*top: -2px;*/
 		}
 		.flip {
-		  /*-webkit-transform-origin: top;*/
 		  -webkit-transform: rotateX(360deg);
+		  -moz-transform: rotateX(360deg);
+		  -ms-transform: rotateX(360deg);
+		  -o-transform: rotateX(360deg);
+		  transform: rotateX(360deg);
 		}
 		.option:active {
 			position:relative;
@@ -176,7 +179,7 @@
 			text-align: left;
 			background-color: #1171bf;
 			color: fff;
-			width: 80%;
+			width: 95%;
 			-moz-border-radius:2px;-webkit-border-radius:2px;border-radius:2px;
 			margin-bottom: 2px;
 		}
@@ -200,20 +203,23 @@
 		}
 
 		.t_no {
+			text-align: center;
 			display: inline-block;
-			width: 30px;
+			width: 5%;
 			padding-left: 10px;
 			padding-left: 10px;
-			background: #185e8e;
 		}
 		.t_name {
+			background-color: #d5d5d7;
+			text-align: center;
 			padding-left: 10px;
 			display: inline-block;
 			width: 50%;
 		}
 		.t_time {
+			text-align: center;
 			display: inline-block;
-			width: 100px;
+			width: 12%;
 		}
 		.grayout {
 			background-color: #fff;
@@ -251,6 +257,11 @@
 			z-index: 100;
 		}
 
+		.textBox {
+	    width: 95%;
+	    padding-left: 10px; 
+		}
+
 		</style>
 		<script>
 			$(function(){
@@ -258,6 +269,8 @@
 				setInterval(function(){
 					$("#markButton").toggleClass("vip");
 				},1000);
+
+				$("#taskHeader").html("<div class='task grayout'><div class='t_no'>No.</div><div class='t_name'><center>Task</center></div><div class='t_time'>Start</div><div class='t_time'>End</div><div class='t_time'>Duration</div></div>");
 
 				function setCookie(name, value) {
 					var d = new Date();
@@ -351,7 +364,7 @@
 					$("#tasks").prepend("<div class='task recent_task'><div class='t_no'>"
 						+ (++count)
 						+ "</div><div class='t_name'>"
-						+ "<input id='input"+count+"'placeholder=''>"
+						+ "<input class='textBox' id='input"+count+"'placeholder=''>"
 						+ "</div><div class='t_time' id='recent_start'>"
 						+ splitedCurrentX[0] + ":" + splitedCurrentX[1] + ":" + splitedCurrentX[2]
 						+ "</div><div class='t_time' id='recent_stop'>"
@@ -410,13 +423,8 @@
 
 
 			<div class="split"></div>
-				<div class="task grayout">
-					<div class="t_no">No.</div>
-					<div class="t_name"><center>กิจกรรม</center></div>
-					<div class="t_time">เริ่ม</div>
-					<div class="t_time">จบ</div>
-					<div class="t_time">ระยะเวลา</div>
-				</div>
+			<div id="taskHeader">
+			</div>
 
 			<div class="" id="tasks">
 			</div>
@@ -425,12 +433,13 @@
 			
 		
 			<div id="free1">
-				Everything will be kept inside cookies for 4000 days.
+				Can't share for now.<br>
+				<font size='30px'>Don't worry, Everything will be kept inside cookies for 4000 days.</font>
 			</div>
 			<div class="floatB">
 				Developed by Mapfap.
 				<button class="noselect option red" id="clearButton">Clear.</button>
-				<button class="noselect option red" id="readme">Read Me.</button>
+				<button class="noselect option red" id="readme">Share.</button>
 			</div>
 		</center>
 	</body>
