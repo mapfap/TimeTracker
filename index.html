@@ -6,15 +6,6 @@
 		<script src="jquery-1.11.0.min.js"></script>
 
 		<title>Time Tracker</title>
-
-		<script>
-			function GetLocation(location) {
-		    alert(location.coords.latitude);
-		    alert(location.coords.longitude);
-		    alert(location.coords.accuracy);
-			}
-			// navigator.geolocation.getCurrentPosition(GetLocation);
-		</script>
 		<style>
 		* {
 			/*font-family: 'THSarabunNew','thaisans_neueregular';*/
@@ -50,19 +41,6 @@
 			user-select: none;
 		}
 
-		.question {
-			font-size: 32px;
-			margin-bottom: 20px;
-			background-color:#595959;
-			-moz-border-radius:5px;
-			-webkit-border-radius:5px;
-			border-radius:5px;
-			display:inline-block;
-			color:#ffffff;
-			padding:5px 16px;
-			text-decoration:none;
-			text-shadow:0px 1px 0px #2f6627;
-		}
 
 		.or {
 			margin-bottom: 10px;
@@ -205,6 +183,7 @@
 		.task:hover {
 			background-color: #1171bf;
 			color: fff;
+			-transition: 0.2s ease;
 			-webkit-transition: 0.2s ease;
 			-moz-webkit-transition: 0.2s ease;
 		}
@@ -212,6 +191,10 @@
 			position: fixed;
 			bottom: 10px;
 			right: 10px;
+			background-color: rgba(0,0,0,0.5);
+			padding-left: 10px;
+			color: white;
+			-moz-border-radius:3px;-webkit-border-radius:3px;border-radius:3px;
 		}
 
 		.t_no {
@@ -236,25 +219,35 @@
 		}
 
 		.red {
-			background-color: #fff;
-			color: #87867d;
+			background-color: #5792d8;
+			color: white;
 			padding: 3px;
 			font-size: 18px;
+		}
+
+		.vip {
+			/*border: solid 2px #19527c;*/
+			background-color: #73aee2;
+			-transition: 1s ease;
+			-webkit-transition: 1s ease;
+			-moz-webkit-transition: 1s ease;
 		}
 
 		</style>
 		<script>
 			$(function(){
 
+				setInterval(function(){
+					$("#markButton").toggleClass("vip");
+				},1000);
+
 				function setCookie(name, value) {
 					var d = new Date();
 					var exdays = 1000;
 					d.setTime(d.getTime()+(exdays*24*60*60*1000));
 					var expires = "expires="+d.toGMTString();
-					if ( value instanceof String ) {
-						value =	value.split('\"').join('*');
-					}
-					document.cookie = name + "=" + value + "; " + expires;
+
+					document.cookie = name + "=" + escape(value) + "; " + expires;
 				}
 
 				function getCookie(name) {
@@ -263,23 +256,11 @@
 					for(var i=0; i<ca.length; i++) {
 					  var c = ca[i].trim();
 					  if (c.indexOf(name)==0)
-					  	return c.substring(name.length,c.length).split('*').join('\"');
-;
+					  	return unescape(c.substring(name.length,c.length));
 					 }
 					return "";
 				}
 			
-
-				$("#b-1").click(function(){
-					$("#f1").hide("slow");
-					$("#f10").slideDown("slow");
-				});
-
-				$("#f-1").submit(function(e){
-					e.preventDefault();
-					$("#s-1").text("ไม่เข้าใจคำถาม \"" + $("#t-1").val() + "\"");
-				});
-
 				// var count = 0;
 				var count = getCookie("count");
 				if (count == "") {
@@ -288,8 +269,10 @@
 					count = parseInt(count);
 				}
 
-				console.log(getCookie("allMarks"))
 				$("#tasks").html(getCookie("allMarks"));
+				for (var i = 1; i <= count; i++) {
+					$("#input" + i).val( unescape(getCookie("input" + i)) );
+				}
 
 				function getSecByFox() {
 					var currentDate = new Date();
@@ -307,10 +290,20 @@
 				var start;
 				var mostRecent = null;
 
+				$("body").delegate("input", "keyup", function(){
+					setCookie( $(this).attr("id"), escape($(this).val()) );
+				});
+
 				$("#clearButton").click(function(){
 					$("#tasks").html("");
-					setCookie("count", 0);
-					setCookie("allMarks", "");
+					count = 0;
+					var cookies = document.cookie.split(";");
+			    for (var i = 0; i < cookies.length; i++) {
+			    	var cookie = cookies[i];
+			    	var eqPos = cookie.indexOf("=");
+			    	var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+			    	document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";	
+			    }
 				});
 
 				$("#markButton").click(function(){
@@ -331,7 +324,7 @@
 					$("#tasks").prepend("<div class='task recent_task'><div class='t_no'>"
 						+ (++count)
 						+ "</div><div class='t_name'>"
-						+ "<input placeholder='สิ่งที่ทำ'>"
+						+ "<input id='input"+count+"'placeholder=''>"
 						+ "</div><div class='t_time' id='recent_start'>"
 						+ splitedCurrentX[0] + ":" + splitedCurrentX[1] + ":" + splitedCurrentX[2]
 						+ "</div><div class='t_time' id='recent_stop'>"
@@ -344,8 +337,9 @@
 					setCookie("allMarks", $("#tasks").html());
 
 					mostRecent = splitedCurrentX;
-
-					setInterval(function(){
+					var interval = 0;
+					clearInterval(interval);
+					var interval = setInterval(function(){
 						current = getSecByFox();
 						var diff = current - start;
 						var splitedDiff = splitSec(diff);
@@ -357,6 +351,7 @@
 						$("#minute").toggleClass("flip");
 						$("#second").toggleClass("flip");
 					}, 1000);
+
 				});
 
 				var zero = function(num) {
